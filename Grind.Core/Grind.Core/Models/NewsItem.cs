@@ -10,7 +10,7 @@ namespace Grind.Core.Models
     {
         public string Author { get; set; }
 
-        public DateTime Published { get; set; }
+        public string Published { get; set; }
 
         public double SentimentScore { get; set; }
 
@@ -20,8 +20,6 @@ namespace Grind.Core.Models
 
         public string Website { get; set; }
 
-        public string MainImageUrl { get; set; }
-        
         public int PerformanceScore { get; set; }
         
         public string SectionTitle { get; set; }

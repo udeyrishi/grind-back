@@ -28,5 +28,13 @@ namespace Utilities
             return str;
         }
 
+        public static void CheckCondition(this bool condition, string message, string parameterName)
+        {
+            if (!condition)
+            {
+                throw new ArgumentException(message, parameterName);
+            }
+        }
+
     }
 }

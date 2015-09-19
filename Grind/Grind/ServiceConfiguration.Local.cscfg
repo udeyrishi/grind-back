@@ -4,6 +4,11 @@
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="IndicoApiKey" value="a037bd9184676c6c70ab32a6e373309c" />
+      <Setting name="WebHoseApiKey" value="1a8f608c-c68a-4f10-b0a5-3257874160af" />
+      <Setting name="IndicoUrl" value="http://apiv2.indico.io/" />
+      <Setting name="KeywordCount" value="3" />
+      <Setting name="ResponseCount" value="3" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>
