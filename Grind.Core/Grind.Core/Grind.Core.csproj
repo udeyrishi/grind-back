@@ -51,6 +51,9 @@
     <Compile Include="Webhose\WebhoseClient.cs" />
     <Compile Include="Webhose\WebhoseQuery.cs" />
     <Compile Include="Webhose\WebhoseResponse.cs" />
+    <Compile Include="Model\News.cs" />
+    <Compile Include="Webhose\WebhosePost.cs" />
+    <Compile Include="Webhose\WebhoseThread.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -65,5 +68,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Webhose\" />
+    <Folder Include="Model\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Utilities\Utilities\Utilities.csproj">
+      <Project>{AFEB945B-F1A8-43C4-A4FF-CFA83957356B}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
