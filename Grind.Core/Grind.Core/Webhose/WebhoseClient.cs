@@ -10,27 +10,25 @@ namespace Grind.Core
 {
 	public class WebhoseClient
 	{
-		private string token;
+        private readonly WebhoseRequest webhoseRequest;
 
 		public WebhoseClient(string token)
 		{
-			this.token = token;
-		
+            this.webhoseRequest = new WebhoseRequest(token.CheckNotNullOrWhitespace("token"));
 		}
 
-		public async Task<WebhoseResponse> Search(String searchQuery, int performanceScore, string language) {
-			WebhoseQuery webhoseQuery = new WebhoseQuery(this.token, searchQuery, performanceScore, language);
-			string query = webhoseQuery.ToString();
-			var requestMaker = new SimpleHttpRequestMaker ("https://webhose.io/search");
-			var response = await requestMaker.MakeRequestAsync (HttpMethod.Get, query); 
-			return await ExtractWebhoseResponseAsync (response);
+		public Task<WebhoseResponse> Search(string searchQuery, int performanceScore, Languages language)
+        {
+            return Task.Run(() =>
+            {
+                return webhoseRequest.getResponse(CreateUrl(searchQuery, performanceScore, language));
+            });
 		}
 
-		private async Task<WebhoseResponse> ExtractWebhoseResponseAsync(HttpResponseMessage response)
-		{
-			string json = await response.Content.ReadAsStringAsync ();
-			WebhoseResponse webhoseResponse = JsonConvert.DeserializeObject<WebhoseResponse>(json);
-			return webhoseResponse;
-		}
-	}
+        private static string CreateUrl(string query, int performanceScore, Languages language)
+        {
+            return string.Format("{0}%20performance_score%3A%3E{1}&language={2}",
+                query.Replace(" ", "%20"), performanceScore.ToString(), language.ToString());
+        }
+    }
 }
