@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -6,7 +7,18 @@ namespace HttpHandler
 {
     public class SimpleHttpRequestMaker
     {
-        public static Task<HttpResponseMessage> MakeRequestAsync(
+        private readonly HttpClient httpClient;
+
+        public SimpleHttpRequestMaker(string baseUri = null)
+        {
+            this.httpClient = new HttpClient();
+            if (!string.IsNullOrWhiteSpace(baseUri))
+            {
+                httpClient.BaseAddress = new Uri(baseUri);
+            }
+        }
+
+        public Task<HttpResponseMessage> MakeRequestAsync(
             HttpMethod method, 
             string uri, 
             string content = null, 
@@ -27,7 +39,7 @@ namespace HttpHandler
                 request.Content = new StringContent(content);
             }
 
-            return new HttpClient().SendAsync(request);
+            return httpClient.SendAsync(request);
         }
     }
 }
