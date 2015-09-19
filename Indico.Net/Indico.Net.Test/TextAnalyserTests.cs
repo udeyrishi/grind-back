@@ -23,5 +23,14 @@ namespace Indico.Net.Test
             double result = await analyser.AnalyseSentimentAsync("This is bad.");
             result.Should().BeLessThan(0.1);
         }
+
+
+        [TestMethod]
+        public async Task AnalyseSentiment_Batch_Works()
+        {
+            double[] result = await analyser.AnalyseSentimentAsync(new[] { "This is bad.", "This is good." } );
+            result[0].Should().BeLessThan(0.1);
+            result[1].Should().BeGreaterThan(0.9);
+        }
     }
 }
