@@ -1,5 +1,10 @@
 ﻿using System;
 using webhose;
+using Grind.Core;
+using Utilities;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Grind.Core
 {
@@ -13,32 +18,19 @@ namespace Grind.Core
 		
 		}
 
-		public WebhoseResponse search(String searchQuery) throws IOException {
-			WebhoseQuery query = new WebhoseQuery(this.token, searchQuery, 4, "english");
-			return search(query);
-		}
-			
-		public WebhoseResponse search(WebhoseQuery query) throws IOException {
-			string url = query.ToString();
-
-			return 
+		public async Task<WebhoseResponse> Search(String searchQuery, int performanceScore, string language) {
+			WebhoseQuery webhoseQuery = new WebhoseQuery(this.token, searchQuery, performanceScore, language);
+			string query = webhoseQuery.ToString();
+			var requestMaker = new SimpleHttpRequestMaker ("https://webhose.io/search");
+			var response = await requestMaker.MakeRequestAsync (HttpMethod.Get, query); 
+			return await ExtractWebhoseResponseAsync (response);
 		}
 
-		public async Task<string> MakeSearchRequest(string url)
+		private async Task<WebhoseResponse> ExtractWebhoseResponseAsync(HttpResponseMessage response)
 		{
-			var requestMaker = new SimpleHttpRequestMaker (url);
-			//TODO GET
-			HttpResponseMessage responseTask = await requestMaker.MakeRequestAsync (HttpMethod.Get, url);
-			return await responseTask.Content.ReadAsStringAsync ();
-		}
-
-		public async Task<bool> Process(string url)
-		{
-			string response = await MakeSearchRequest (url);
-
-			return true;
+			string json = await response.Content.ReadAsStringAsync ();
+			WebhoseResponse webhoseResponse = JsonConvert.DeserializeObject<WebhoseResponse>(json);
 		}
 
 	}
 }
-
