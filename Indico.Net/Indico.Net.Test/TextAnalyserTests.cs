@@ -1,8 +1,7 @@
-﻿using System;
+﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FluentAssertions;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Indico.Net.Test
 {
@@ -161,5 +160,29 @@ namespace Indico.Net.Test
                 }
             }
         }
+
+        [TestMethod]
+        public async Task NamedEntity_Works()
+        {
+            var result = await analyser.GetNamedEntities("Pope Francis celebrated Mass with nearly a million Bolivians in Santa Cruz on Wednesday.");
+            result.Count.Should().BeGreaterThan(0);
+            result.Should().ContainKey("Pope Francis");
+            result["Pope Francis"].Categories.Should().ContainKey("person");
+            result["Pope Francis"].Categories["person"].Should().BeGreaterThan(0.3);
+        }
+        
+
+        [TestMethod]
+        public async Task NamedEntityBatch_Works()
+        {
+            var result = await analyser.GetNamedEntities(new string[] { "Those who surrender freedom for security will not have, nor do they deserve, either one.",
+                "Pope Francis celebrated Mass with nearly a million Bolivians in Santa Cruz on Wednesday." });
+            result[0].Count.Should().Be(0);
+            result[1].Count.Should().BeGreaterThan(0);
+            result[1].Should().ContainKey("Pope Francis");
+            result[1]["Pope Francis"].Categories.Should().ContainKey("person");
+            result[1]["Pope Francis"].Categories["person"].Should().BeGreaterThan(0.3);
+        }
+        
     }
 }
