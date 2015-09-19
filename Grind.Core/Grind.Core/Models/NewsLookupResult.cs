@@ -8,7 +8,7 @@ namespace Grind.Core.Models
 {
     public class NewsLookupResult
     {
-        public List<NewsItem> NewsItems { get; set; }
+        public IEnumerable<NewsItem> NewsItems { get; set; }
         public string NextUrl { get; set; }
     }
 }

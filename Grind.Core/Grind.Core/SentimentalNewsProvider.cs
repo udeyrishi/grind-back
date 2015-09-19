@@ -62,36 +62,40 @@ namespace Grind.Core
             var newItems = FilterNewsItemsByPerformanceScore(await GetNewsItemsFromWebhoseResponse(webhoseResponse, keywordCount), performanceScore);
             return new NewsLookupResult()
             {
-                NextUrl = newItems.Count > 0 ? webhoseResponse.next : null,
+                NextUrl = newItems.Count() > 0 ? webhoseResponse.next : null,
                 NewsItems = newItems
             };
         }
 
-        private List<NewsItem> FilterNewsItemsByPerformanceScore(List<NewsItem> newsItems, int performanceScore)
+        private IEnumerable<NewsItem> FilterNewsItemsByPerformanceScore(IEnumerable<NewsItem> newsItems, int performanceScore)
         {
-            return newsItems.Where(news => news.PerformanceScore == performanceScore).ToList();
+            return newsItems.Where(news => news.PerformanceScore == performanceScore);
         }
 
-        private async Task<List<NewsItem>> GetNewsItemsFromWebhoseResponse(WebhoseResponse webhoseResponse, int keywordCount)
+        private async Task<IEnumerable<NewsItem>> GetNewsItemsFromWebhoseResponse(WebhoseResponse webhoseResponse, int keywordCount)
         {
+            Dictionary<string, double>[] keywords = await nlpClient.GetKeywordsAsync(webhoseResponse.posts.Select(p => p.text));
+            double[] sentimentAnalysisResults = await nlpClient.AnalyseSentimentAsync(webhoseResponse.posts.Select(p => p.text));
+
             var newsItems = new List<NewsItem>();
-            foreach (var webhosePost in webhoseResponse.posts)
+            for (int i = 0; i < webhoseResponse.posts.Count; ++i)
             {
-                newsItems.Add(
-                    new NewsItem()
-                    {
-                        Author = webhosePost.author,
-                        KeyWords = await nlpClient.GetKeywordsAsync(webhosePost.text, keywordCount),
-                        PerformanceScore = int.Parse(webhosePost.thread.performanceScore),
-                        Published = webhosePost.published,
-                        SectionTitle = webhosePost.thread.sectionTitle,
-                        SentimentScore = await nlpClient.AnalyseSentimentAsync(webhosePost.text),
-                        SiteSection = webhosePost.thread.siteSection,
-                        Title = webhosePost.title,
-                        Url = webhosePost.url,
-                        Website = webhosePost.thread.site
-                    });
+                var webhosePost = webhoseResponse.posts[i];
+                newsItems.Add(new NewsItem()
+                {
+                    Author = webhosePost.author,
+                    KeyWords = keywords[i],
+                    PerformanceScore = int.Parse(webhosePost.thread.performanceScore),
+                    Published = webhosePost.published,
+                    SectionTitle = webhosePost.thread.sectionTitle,
+                    SentimentScore = sentimentAnalysisResults[i],
+                    SiteSection = webhosePost.thread.siteSection,
+                    Title = webhosePost.title,
+                    Url = webhosePost.url,
+                    Website = webhosePost.thread.site
+                });
             }
+
             return newsItems;
         }
     }
