@@ -10,6 +10,11 @@
     </Sites>
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="IndicoApiKey" />
+      <Setting name="WebHoseApiKey" />
+      <Setting name="IndicoUrl" />
+      <Setting name="KeywordCount" />
+      <Setting name="ResponseCount" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
