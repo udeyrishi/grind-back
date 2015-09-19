@@ -14,10 +14,12 @@ namespace Grind.Core
     {
         private readonly WebhoseClient newsClient;
         private readonly TextAnalyser nlpClient;
+        private readonly string webHoseToken;
 
         public SentimentalNewsProvider(string webhoseToken, string indicoUrl, string indicoToken)
         {
-            this.newsClient = new WebhoseClient(webhoseToken.CheckNotNullOrWhitespace("token"));
+            this.webHoseToken = webhoseToken.CheckNotNullOrWhitespace("token");
+            this.newsClient = new WebhoseClient(webHoseToken);
             this.nlpClient = new TextAnalyser(indicoUrl.CheckNotNullOrWhitespace("indicoUrl"), 
                 indicoToken.CheckNotNullOrWhitespace("indicoToken"));
         }
@@ -37,6 +39,12 @@ namespace Grind.Core
         public async Task<NewsLookupResult> GetNewsFromUrl(string uri, int performanceScore, int keywordCount)
         {
             (performanceScore >= 0).CheckCondition("performanceScore can't be negative.", "performanceScore");
+            var webhoseResponse = await newsClient.SearchAsync(CleanupNextUri(uri));
+            return await CreateNewsLookupResult(performanceScore, keywordCount, webhoseResponse);
+        }
+
+        private string CleanupNextUri(string uri)
+        {
             if (uri.Contains("?"))
             {
                 int start = uri.IndexOf('?') + 1;
@@ -46,8 +54,7 @@ namespace Grind.Core
                 }
                 uri = uri.Substring(start, uri.Length - start);
             }
-            var webhoseResponse = await newsClient.SearchAsync(uri);
-            return await CreateNewsLookupResult(performanceScore, keywordCount, webhoseResponse);
+            return uri.Replace("token=" + webHoseToken, "").Replace("format=html", "");
         }
 
         private async Task<NewsLookupResult> CreateNewsLookupResult(int performanceScore, int keywordCount, WebhoseResponse webhoseResponse)
