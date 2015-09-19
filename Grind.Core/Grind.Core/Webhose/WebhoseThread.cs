@@ -2,7 +2,7 @@
 
 namespace Grind.Core
 {
-	public class News
+	public class WebhoseThread
 	{
 		private string url;
 		private string siteFull;
@@ -17,8 +17,8 @@ namespace Grind.Core
 		private string siteType;
 		private string mainImage;
 		private string country;
-	
-		public News (
+
+		public WebhoseThread (
 			string url,
 			string siteFull,
 			string site,

@@ -2,7 +2,7 @@
 
 namespace Grind.Core
 {
-	public class News
+	public class WebhosePost
 	{
 		private string url;
 		private string siteFull;
@@ -17,8 +17,9 @@ namespace Grind.Core
 		private string siteType;
 		private string mainImage;
 		private string country;
-	
-		public News (
+		private WebhoseThread thread;
+
+		public WebhosePost (
 			string url,
 			string siteFull,
 			string site,
@@ -31,7 +32,8 @@ namespace Grind.Core
 			string participantsCount,
 			string siteType,
 			string mainImage,
-			string country)
+			string country,
+			WebhoseThread thread)
 		{
 			this.url = url;
 			this.siteFull = siteFull;
@@ -46,6 +48,7 @@ namespace Grind.Core
 			this.siteType = siteType;
 			this.mainImage = mainImage;
 			this.country = country;
+			this.thread = thread;
 		}
 
 		public string GetUrl()
@@ -111,6 +114,11 @@ namespace Grind.Core
 		public string GetCountry()
 		{
 			return this.country;
+		}
+
+		public WebhoseThread GetThread()
+		{
+			return this.thread;
 		}
 	}
 }
