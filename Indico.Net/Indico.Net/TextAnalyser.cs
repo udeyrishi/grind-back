@@ -41,6 +41,16 @@ namespace Indico.Net
             return MakeDataRequest<double[]>(@"sentimenthq/batch", strs);
         }
 
+        public Task<Dictionary<string, double>> GetPoliticalSentimentsAsync(string str)
+        {
+            return MakeDataRequest<Dictionary<string, double>>("political", str);
+        }
+
+        public Task<Dictionary<string, double>[]> GetPoliticalSentimentsAsync(IEnumerable<string> strs)
+        {
+            return MakeDataRequest<Dictionary<string, double>[]>("political/batch", strs);
+        }
+
         public Task<Dictionary<string, double>> GetTextTagsAsync(
             string str, 
             int? topN = null, 
