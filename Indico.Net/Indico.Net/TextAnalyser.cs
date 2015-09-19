@@ -73,36 +73,7 @@ namespace Indico.Net
             return MakeGetTextTagsRequest<Dictionary<string, double>[]>(@"texttags/batch", strs, topN, threshold, independent);
         }
 
-        private Task<T> MakeGetTextTagsRequest<T>(
-            string uri,
-            object data,
-            int? topN = null,
-            double? threshold = null,
-            bool independent = false)
-        {
-            var content = new Dictionary<string, object>()
-                {
-                    { "data", data }
-                };
-
-            if (topN.HasValue)
-            {
-                content.Add("top_n", topN.Value);
-            }
-
-            if (threshold.HasValue)
-            {
-                content.Add("threshold", threshold.Value);
-            }
-
-            if (independent)
-            {
-                content.Add("independent", independent);
-            }
-
-            return MakeDataRequest<T>(uri, content);
-        }
-
+        
         public Task<Dictionary<string, double>> GetKeywordsAsync(
             string str,
             int? topN = null,
@@ -119,36 +90,6 @@ namespace Indico.Net
             bool relative = false)
         {
             return MakeGetKeywordsRequest<Dictionary<string, double>[]>(@"keywords/batch", strs, topN, threshold, relative);
-        }
-
-        private Task<T> MakeGetKeywordsRequest<T>(
-            string uri,
-            object data,
-            int? topN = null,
-            double? threshold = null,
-            bool relative = false)
-        {
-            var content = new Dictionary<string, object>()
-                {
-                    { "data", data }
-                };
-
-            if (topN.HasValue)
-            {
-                content.Add("top_n", topN.Value);
-            }
-
-            if (threshold.HasValue)
-            {
-                content.Add("threshold", threshold.Value);
-            }
-
-            if (relative)
-            {
-                content.Add("relative", relative);
-            }
-
-            return MakeDataRequest<T>(uri, content);
         }
 
         public Task<Dictionary<string, NamedEntity>> GetNamedEntities(string str, double? threshold = null)
@@ -179,6 +120,67 @@ namespace Indico.Net
             }
 
             return MakeDataRequest<Dictionary<string, NamedEntity>[]>(@"namedentities/batch", content);
+        }
+
+        private Task<T> MakeGetTextTagsRequest<T>(
+            string uri,
+            object data,
+            int? topN = null,
+            double? threshold = null,
+            bool independent = false)
+        {
+            var content = new Dictionary<string, object>()
+                {
+                    { "data", data }
+                };
+
+            if (topN.HasValue)
+            {
+                content.Add("top_n", topN.Value);
+            }
+
+            if (threshold.HasValue)
+            {
+                content.Add("threshold", threshold.Value);
+            }
+
+            if (independent)
+            {
+                content.Add("independent", independent);
+            }
+
+            return MakeDataRequest<T>(uri, content);
+        }
+
+
+        private Task<T> MakeGetKeywordsRequest<T>(
+            string uri,
+            object data,
+            int? topN = null,
+            double? threshold = null,
+            bool relative = false)
+        {
+            var content = new Dictionary<string, object>()
+                {
+                    { "data", data }
+                };
+
+            if (topN.HasValue)
+            {
+                content.Add("top_n", topN.Value);
+            }
+
+            if (threshold.HasValue)
+            {
+                content.Add("threshold", threshold.Value);
+            }
+
+            if (relative)
+            {
+                content.Add("relative", relative);
+            }
+
+            return MakeDataRequest<T>(uri, content);
         }
 
         private async Task<T> MakeDataRequest<T>(string uri, Dictionary<string, object> content)
