@@ -99,5 +99,21 @@ namespace Indico.Net.Test
                 }
             }
         }
+
+        [TestMethod]
+        public async Task AnalysePoliticalSentiment_PositiveString_Works()
+        {
+            var result = await analyser.GetPoliticalSentimentsAsync("Those who surrender freedom for security will not have, nor do they deserve, either one.");
+            result.Count.Should().BeGreaterThan(0);
+        }
+
+        [TestMethod]
+        public async Task AnalysePoliticalSentimentBatch_NegativeString_Works()
+        {
+            var result = await analyser.GetPoliticalSentimentsAsync(new string[] { "Those who surrender freedom for security will not have, nor do they deserve, either one.",
+            "It is everyone\u0027s duty to respect the planet."});
+            result[0].Count.Should().BeGreaterThan(1);
+            result[1].Count.Should().BeGreaterThan(1);
+        }
     }
 }
