@@ -64,6 +64,17 @@ namespace Indico.Net.Test
             result.Count.Should().BeGreaterThan(0);
         }
 
+        [TestMethod]
+        public async Task TextTags_WithOptionalValues_Works()
+        {
+            Dictionary<string, double> result = await analyser.GetTextTagsAsync(
+                "Blog posts about Android tech make better journalism than most news outlets.", 5, 0.1);
+            result.Count.Should().BeLessOrEqualTo(5);
+            foreach(var kvp in result)
+            {
+                kvp.Value.Should().BeGreaterThan(0.1);
+            }
+        }
 
         [TestMethod]
         public async Task TextTagsBatch_Works()
@@ -71,6 +82,22 @@ namespace Indico.Net.Test
             Dictionary<string, double>[] result = await analyser.GetTextTagsAsync(new string[] { "This is bad.", "This is good." });
             result[0].Count.Should().BeGreaterThan(0);
             result[1].Count.Should().BeGreaterThan(0);
+        }
+
+        [TestMethod]
+        public async Task TextTagsBatch_WithOptionalValues_Works()
+        {
+            Dictionary<string, double>[] results = await analyser.GetTextTagsAsync(
+                new string[] { "Blog posts about Android tech make better journalism than most news outlets.",
+                "We\u0027re supposed to get up to 24 inches of snow in the storm.."}, 5, 0.1);
+            foreach (var result in results)
+            {
+                result.Count.Should().BeLessOrEqualTo(5);
+                foreach (var kvp in result)
+                {
+                    kvp.Value.Should().BeGreaterThan(0.1);
+                }
+            }
         }
     }
 }
