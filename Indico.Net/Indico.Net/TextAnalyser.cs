@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Indico.Net.Models;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Utilities;
-using Newtonsoft.Json;
 
 namespace Indico.Net
 {
@@ -23,37 +21,43 @@ namespace Indico.Net
 
         public Task<double> AnalyseSentimentAsync(string str)
         {
-            return MakeDataRequest<double>("sentiment", str);
+            return MakeDataRequest<double>("sentiment",
+                new Dictionary<string, object>() { { "data", str } });
         }
 
         public Task<double[]> AnalyseSentimentAsync(IEnumerable<string> strs)
         {
-            return MakeDataRequest<double[]>(@"sentiment/batch", strs);
+            return MakeDataRequest<double[]>(@"sentiment/batch",
+                new Dictionary<string, object>() { { "data", strs } });
         }
 
         public Task<double> AnalyseSentimentHighQualityAsync(string str)
         {
-            return MakeDataRequest<double>("sentimenthq", str);
+            return MakeDataRequest<double>("sentimenthq",
+                new Dictionary<string, object>() { { "data", str } });
         }
 
         public Task<double[]> AnalyseSentimentHighQualityAsync(IEnumerable<string> strs)
         {
-            return MakeDataRequest<double[]>(@"sentimenthq/batch", strs);
+            return MakeDataRequest<double[]>(@"sentimenthq/batch",
+                new Dictionary<string, object>() { { "data", strs } });
         }
 
         public Task<Dictionary<string, double>> GetPoliticalSentimentsAsync(string str)
         {
-            return MakeDataRequest<Dictionary<string, double>>("political", str);
+            return MakeDataRequest<Dictionary<string, double>>("political",
+                new Dictionary<string, object>() { { "data", str } });
         }
 
         public Task<Dictionary<string, double>[]> GetPoliticalSentimentsAsync(IEnumerable<string> strs)
         {
-            return MakeDataRequest<Dictionary<string, double>[]>("political/batch", strs);
+            return MakeDataRequest<Dictionary<string, double>[]>("political/batch",
+                new Dictionary<string, object>() { { "data", strs } });
         }
 
         public Task<Dictionary<string, double>> GetTextTagsAsync(
-            string str, 
-            int? topN = null, 
+            string str,
+            int? topN = null,
             double? threshold = null,
             bool independent = false)
         {
@@ -69,10 +73,10 @@ namespace Indico.Net
             return MakeGetTextTagsRequest<Dictionary<string, double>[]>(@"texttags/batch", strs, topN, threshold, independent);
         }
 
-        private async Task<T> MakeGetTextTagsRequest<T>(
+        private Task<T> MakeGetTextTagsRequest<T>(
             string uri,
-            object data, 
-            int? topN = null, 
+            object data,
+            int? topN = null,
             double? threshold = null,
             bool independent = false)
         {
@@ -96,13 +100,7 @@ namespace Indico.Net
                 content.Add("independent", independent);
             }
 
-            var response = await requestMaker.MakeRequestAsync(HttpMethod.Post, GetIndicoUri(uri),
-            JsonConvert.SerializeObject(content));
-
-            var results = JsonConvert.DeserializeObject<Dictionary<string, T>>(
-                await response.Content.ReadAsStringAsync());
-
-            return results[resultsKey];
+            return MakeDataRequest<T>(uri, content);
         }
 
         public Task<Dictionary<string, double>> GetKeywordsAsync(
@@ -123,7 +121,7 @@ namespace Indico.Net
             return MakeGetKeywordsRequest<Dictionary<string, double>[]>(@"keywords/batch", strs, topN, threshold, relative);
         }
 
-        private async Task<T> MakeGetKeywordsRequest<T>(
+        private Task<T> MakeGetKeywordsRequest<T>(
             string uri,
             object data,
             int? topN = null,
@@ -150,20 +148,43 @@ namespace Indico.Net
                 content.Add("relative", relative);
             }
 
-            var response = await requestMaker.MakeRequestAsync(HttpMethod.Post, GetIndicoUri(uri),
-            JsonConvert.SerializeObject(content));
-
-            var results = JsonConvert.DeserializeObject<Dictionary<string, T>>(
-                await response.Content.ReadAsStringAsync());
-
-            return results[resultsKey];
+            return MakeDataRequest<T>(uri, content);
         }
 
+        public Task<Dictionary<string, NamedEntity>> GetNamedEntities(string str, double? threshold = null)
+        {
+            var content = new Dictionary<string, object>()
+            {
+                { "data", str }
+            };
 
-        private async Task<T> MakeDataRequest<T>(string uri, object content)
+            if (threshold.HasValue)
+            {
+                content.Add("threshold", threshold);
+            }
+
+            return MakeDataRequest<Dictionary<string, NamedEntity>>("namedentities", content);
+        }
+
+        public Task<Dictionary<string, NamedEntity>[]> GetNamedEntities(IEnumerable<string> strs, double? threshold = null)
+        {
+            var content = new Dictionary<string, object>()
+            {
+                { "data", strs }
+            };
+
+            if (threshold.HasValue)
+            {
+                content.Add("threshold", threshold);
+            }
+
+            return MakeDataRequest<Dictionary<string, NamedEntity>[]>(@"namedentities/batch", content);
+        }
+
+        private async Task<T> MakeDataRequest<T>(string uri, Dictionary<string, object> content)
         {
             var response = await requestMaker.MakeRequestAsync(HttpMethod.Post, GetIndicoUri(uri),
-                GetContentInIndicoJsonFormat(content));
+                JsonConvert.SerializeObject(content));
 
             var results = JsonConvert.DeserializeObject<Dictionary<string, T>>(
                 await response.Content.ReadAsStringAsync());
@@ -174,14 +195,6 @@ namespace Indico.Net
         private string GetIndicoUri(string str)
         {
             return string.Format("/{0}?key={1}", str, indicoApiKey);
-        }
-
-        private string GetContentInIndicoJsonFormat(object data)
-        {
-            return JsonConvert.SerializeObject(new Dictionary<string, object>()
-            {
-                { "data", data }
-            });
         }
     }
 }
