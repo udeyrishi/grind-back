@@ -105,6 +105,61 @@ namespace Indico.Net
             return results[resultsKey];
         }
 
+        public Task<Dictionary<string, double>> GetKeywordsAsync(
+            string str,
+            int? topN = null,
+            double? threshold = null,
+            bool relative = false)
+        {
+            return MakeGetKeywordsRequest<Dictionary<string, double>>("keywords", str, topN, threshold, relative);
+        }
+
+        public Task<Dictionary<string, double>[]> GetKeywordsAsync(
+            IEnumerable<string> strs,
+            int? topN = null,
+            double? threshold = null,
+            bool relative = false)
+        {
+            return MakeGetKeywordsRequest<Dictionary<string, double>[]>(@"keywords/batch", strs, topN, threshold, relative);
+        }
+
+        private async Task<T> MakeGetKeywordsRequest<T>(
+            string uri,
+            object data,
+            int? topN = null,
+            double? threshold = null,
+            bool relative = false)
+        {
+            var content = new Dictionary<string, object>()
+                {
+                    { "data", data }
+                };
+
+            if (topN.HasValue)
+            {
+                content.Add("top_n", topN.Value);
+            }
+
+            if (threshold.HasValue)
+            {
+                content.Add("threshold", threshold.Value);
+            }
+
+            if (relative)
+            {
+                content.Add("relative", relative);
+            }
+
+            var response = await requestMaker.MakeRequestAsync(HttpMethod.Post, GetIndicoUri(uri),
+            JsonConvert.SerializeObject(content));
+
+            var results = JsonConvert.DeserializeObject<Dictionary<string, T>>(
+                await response.Content.ReadAsStringAsync());
+
+            return results[resultsKey];
+        }
+
+
         private async Task<T> MakeDataRequest<T>(string uri, object content)
         {
             var response = await requestMaker.MakeRequestAsync(HttpMethod.Post, GetIndicoUri(uri),

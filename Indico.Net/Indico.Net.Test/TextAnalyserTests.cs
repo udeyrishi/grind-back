@@ -115,5 +115,51 @@ namespace Indico.Net.Test
             result[0].Count.Should().BeGreaterThan(1);
             result[1].Count.Should().BeGreaterThan(1);
         }
+
+        [TestMethod]
+        public async Task Keywords_Works()
+        {
+            Dictionary<string, double> result = await analyser.GetKeywordsAsync("Those who surrender freedom for security will not have, nor do they deserve, either one.");
+            result.Count.Should().BeGreaterThan(0);
+        }
+
+        // TODO: Fix this ourselves in the wrapper if a solution isn't found
+        [TestMethod, Ignore]
+        public async Task Keywords_WithOptionalValues_Works()
+        {
+            Dictionary<string, double> result = await analyser.GetKeywordsAsync(
+                "Blog posts about Android tech make better journalism than most news outlets.", 2, 0.1);
+            result.Count.Should().BeLessOrEqualTo(2);
+            foreach (var kvp in result)
+            {
+                kvp.Value.Should().BeGreaterThan(0.1);
+            }
+        }
+
+        [TestMethod]
+        public async Task KeywordsBatch_Works()
+        {
+            Dictionary<string, double>[] result = await analyser.GetKeywordsAsync(new string[] { "Those who surrender freedom for security will not have, nor do they deserve, either one.",
+                "Blog posts about Android tech make better journalism than most news outlets." });
+            result[0].Count.Should().BeGreaterThan(0);
+            result[1].Count.Should().BeGreaterThan(0);
+        }
+
+        // TODO: Fix this ourselves in the wrapper if a solution isn't found
+        [TestMethod, Ignore]
+        public async Task KeywordsBatch_WithOptionalValues_Works()
+        {
+            Dictionary<string, double>[] results = await analyser.GetKeywordsAsync(
+                new string[] { "Blog posts about Android tech make better journalism than most news outlets.",
+                "We\u0027re supposed to get up to 24 inches of snow in the storm.."}, 2, 0.1);
+            foreach (var result in results)
+            {
+                result.Count.Should().BeLessOrEqualTo(2);
+                foreach (var kvp in result)
+                {
+                    kvp.Value.Should().BeGreaterThan(0.1);
+                }
+            }
+        }
     }
 }
