@@ -11,6 +11,7 @@ namespace Indico.Net
 {
     public class TextAnalyser
     {
+        private const string resultsKey = "results";
         private readonly SimpleHttpRequestMaker requestMaker;
         private readonly string indicoApiKey;
 
@@ -20,13 +21,25 @@ namespace Indico.Net
             this.requestMaker = new SimpleHttpRequestMaker(apiUrl.CheckNotNullOrWhitespace("url"));
         }
 
-        public async Task<double> AnalyseSentimentAsync(string str)
+        public Task<double> AnalyseSentimentAsync(string str)
         {
-            var response = await requestMaker.MakeRequestAsync(HttpMethod.Post, GetIndicoUri("sentiment"), 
-                GetContentInIndicoJsonFormat(str));
+            return MakeDataRequest<double>("sentiment", str);
+        }
 
-            var results = JsonConvert.DeserializeObject<Dictionary<string, double>>(await response.Content.ReadAsStringAsync());
-            return results["results"];
+        public Task<double[]> AnalyseSentimentAsync(IEnumerable<string> strs)
+        {
+            return MakeDataRequest<double[]>(@"sentiment/batch", strs);
+        }
+
+        private async Task<T> MakeDataRequest<T>(string uri, object content)
+        {
+            var response = await requestMaker.MakeRequestAsync(HttpMethod.Post, GetIndicoUri(uri),
+                GetContentInIndicoJsonFormat(content));
+
+            var results = JsonConvert.DeserializeObject<Dictionary<string, T>>(
+                await response.Content.ReadAsStringAsync());
+
+            return results[resultsKey];
         }
 
         private string GetIndicoUri(string str)
@@ -34,9 +47,9 @@ namespace Indico.Net
             return string.Format("/{0}?key={1}", str, indicoApiKey);
         }
 
-        private string GetContentInIndicoJsonFormat(string data)
+        private string GetContentInIndicoJsonFormat(object data)
         {
-            return JsonConvert.SerializeObject(new Dictionary<string, string>()
+            return JsonConvert.SerializeObject(new Dictionary<string, object>()
             {
                 { "data", data }
             });
