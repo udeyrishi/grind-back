@@ -30,7 +30,7 @@ namespace Grind.Core
 		{
 			string json = await response.Content.ReadAsStringAsync ();
 			WebhoseResponse webhoseResponse = JsonConvert.DeserializeObject<WebhoseResponse>(json);
+			return webhoseResponse;
 		}
-
 	}
 }
