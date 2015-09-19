@@ -47,7 +47,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="INewsProvider.cs" />
+    <Compile Include="Models\NewsItem.cs" />
+    <Compile Include="Models\NewsLookupResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SentimentalNewsProvider.cs" />
     <Compile Include="Webhose\WebhoseClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -63,6 +67,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\Indico.Net\Indico.Net\Indico.Net.csproj">
+      <Project>{5fc0d60f-2835-4303-b253-d8de0b483bc7}</Project>
+      <Name>Indico.Net</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Utilities\Utilities\Utilities.csproj">
       <Project>{AFEB945B-F1A8-43C4-A4FF-CFA83957356B}</Project>
       <Name>Utilities</Name>
