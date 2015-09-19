@@ -31,6 +31,26 @@ namespace Indico.Net
             return MakeDataRequest<double[]>(@"sentiment/batch", strs);
         }
 
+        public Task<double> AnalyseSentimentHighQualityAsync(string str)
+        {
+            return MakeDataRequest<double>("sentimenthq", str);
+        }
+
+        public Task<double[]> AnalyseSentimentHighQualityAsync(IEnumerable<string> strs)
+        {
+            return MakeDataRequest<double[]>(@"sentimenthq/batch", strs);
+        }
+
+        public Task<Dictionary<string, double>> GetTextTagsAsync(string str)
+        {
+            return MakeDataRequest<Dictionary<string, double>>("texttags", str);
+        }
+
+        public Task<Dictionary<string, double>[]> GetTextTagsAsync(IEnumerable<string> strs)
+        {
+            return MakeDataRequest<Dictionary<string, double>[]>(@"texttags/batch", strs);
+        }
+
         private async Task<T> MakeDataRequest<T>(string uri, object content)
         {
             var response = await requestMaker.MakeRequestAsync(HttpMethod.Post, GetIndicoUri(uri),
