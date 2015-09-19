@@ -21,11 +21,9 @@ namespace Grind.Core
 			this.language = language;
 		}
 
-		private string ToString()
+		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append("https://webhose.io/search");
-
 			//Add token
 			sb.Append("?token="+token);
 			// Add format
