@@ -41,14 +41,58 @@ namespace Indico.Net
             return MakeDataRequest<double[]>(@"sentimenthq/batch", strs);
         }
 
-        public Task<Dictionary<string, double>> GetTextTagsAsync(string str)
+        public Task<Dictionary<string, double>> GetTextTagsAsync(
+            string str, 
+            int? topN = null, 
+            double? threshold = null,
+            bool independent = false)
         {
-            return MakeDataRequest<Dictionary<string, double>>("texttags", str);
+            return MakeGetTextTagsRequest<Dictionary<string, double>>("texttags", str, topN, threshold, independent);
         }
 
-        public Task<Dictionary<string, double>[]> GetTextTagsAsync(IEnumerable<string> strs)
+        public Task<Dictionary<string, double>[]> GetTextTagsAsync(
+            IEnumerable<string> strs,
+            int? topN = null,
+            double? threshold = null,
+            bool independent = false)
         {
-            return MakeDataRequest<Dictionary<string, double>[]>(@"texttags/batch", strs);
+            return MakeGetTextTagsRequest<Dictionary<string, double>[]>(@"texttags/batch", strs, topN, threshold, independent);
+        }
+
+        private async Task<T> MakeGetTextTagsRequest<T>(
+            string uri,
+            object data, 
+            int? topN = null, 
+            double? threshold = null,
+            bool independent = false)
+        {
+            var content = new Dictionary<string, object>()
+                {
+                    { "data", data }
+                };
+
+            if (topN.HasValue)
+            {
+                content.Add("top_n", topN.Value);
+            }
+
+            if (threshold.HasValue)
+            {
+                content.Add("threshold", threshold.Value);
+            }
+
+            if (independent)
+            {
+                content.Add("independent", independent);
+            }
+
+            var response = await requestMaker.MakeRequestAsync(HttpMethod.Post, GetIndicoUri(uri),
+            JsonConvert.SerializeObject(content));
+
+            var results = JsonConvert.DeserializeObject<Dictionary<string, T>>(
+                await response.Content.ReadAsStringAsync());
+
+            return results[resultsKey];
         }
 
         private async Task<T> MakeDataRequest<T>(string uri, object content)
