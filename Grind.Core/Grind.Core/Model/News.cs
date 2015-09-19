@@ -18,7 +18,7 @@ namespace Grind.Core
 		private string mainImage;
 		private string country;
 	
-		public New (string url,
+		public News (string url,
 					string siteFull,
 					string site,
 					string siteSelection,
