@@ -122,8 +122,7 @@ namespace Indico.Net.Test
             result.Count.Should().BeGreaterThan(0);
         }
 
-        // TODO: Fix this ourselves in the wrapper if a solution isn't found
-        [TestMethod, Ignore]
+        [TestMethod]
         public async Task Keywords_WithOptionalValues_Works()
         {
             Dictionary<string, double> result = await analyser.GetKeywordsAsync(
@@ -144,8 +143,7 @@ namespace Indico.Net.Test
             result[1].Count.Should().BeGreaterThan(0);
         }
 
-        // TODO: Fix this ourselves in the wrapper if a solution isn't found
-        [TestMethod, Ignore]
+        [TestMethod]
         public async Task KeywordsBatch_WithOptionalValues_Works()
         {
             Dictionary<string, double>[] results = await analyser.GetKeywordsAsync(
