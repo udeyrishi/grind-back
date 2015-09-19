@@ -21,14 +21,7 @@ namespace Grind.Core
 			this.language = language;
 		}
 
-		public String Search()
-		{
-			this.CreateUrl();
-			// Hacer el get http a url
-			return url;
-		}
-
-		private string CreateUrl()
+		private string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append("https://webhose.io/search");
