@@ -62,7 +62,7 @@ namespace Grind.Core
         {
             return new NewsLookupResult()
             {
-                NextUrl = webhoseResponse.next,
+                NextUrl = webhoseResponse.moreResultsAvailable != 0 ? webhoseResponse.next : null,
                 NewsItems = FilterNewsItemsByPerformanceScore(await GetNewsItemsFromWebhoseResponse(webhoseResponse, keywordCount, namedEntitiesThreshold), performanceScore)
             };
         }
