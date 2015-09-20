@@ -74,32 +74,35 @@ namespace Grind.Core
 
         private async Task<IEnumerable<NewsItem>> GetNewsItemsFromWebhoseResponse(WebhoseResponse webhoseResponse, int keywordCount, double namedEntitiesThreshold)
         {
-            Dictionary<string, double>[] keywords = await nlpClient.GetKeywordsAsync(webhoseResponse.posts.Select(p => p.text));
-            double[] sentimentAnalysisResults = await nlpClient.AnalyseSentimentAsync(webhoseResponse.posts.Select(p => p.text));
-            Dictionary<string, NamedEntity>[] namedEntities = await nlpClient.GetNamedEntities(webhoseResponse.posts.Select(p => p.text), namedEntitiesThreshold);
-
             var newsItems = new List<NewsItem>();
 
-            for (int i = 0; i < webhoseResponse.posts.Count; ++i)
+            if (webhoseResponse.posts.Count > 0)
             {
-                var webhosePost = webhoseResponse.posts[i];
-                newsItems.Add(new NewsItem()
-                {
-                    Author = webhosePost.author,
-                    KeyWords = keywords[i],
-                    PerformanceScore = int.Parse(webhosePost.thread.performanceScore),
-                    Published = webhosePost.published,
-                    SectionTitle = webhosePost.thread.sectionTitle,
-                    SentimentScore = sentimentAnalysisResults[i],
-                    SiteSection = webhosePost.thread.siteSection,
-                    Title = webhosePost.title,
-                    Url = webhosePost.url,
-                    Website = webhosePost.thread.site,
-                    NamedEntities = namedEntities[i],
-                    PoliticalSentiments = await nlpClient.GetPoliticalSentimentsAsync(webhosePost.text)
-                });
-            }
+                Dictionary<string, double>[] keywords = await nlpClient.GetKeywordsAsync(webhoseResponse.posts.Select(p => p.text));
+                double[] sentimentAnalysisResults = await nlpClient.AnalyseSentimentAsync(webhoseResponse.posts.Select(p => p.text));
+                Dictionary<string, NamedEntity>[] namedEntities = await nlpClient.GetNamedEntities(webhoseResponse.posts.Select(p => p.text), namedEntitiesThreshold);
 
+                for (int i = 0; i < webhoseResponse.posts.Count; ++i)
+                {
+                    var webhosePost = webhoseResponse.posts[i];
+                    newsItems.Add(new NewsItem()
+                    {
+                        Author = webhosePost.author,
+                        KeyWords = keywords[i],
+                        PerformanceScore = int.Parse(webhosePost.thread.performanceScore),
+                        Published = webhosePost.published,
+                        SectionTitle = webhosePost.thread.sectionTitle,
+                        SentimentScore = sentimentAnalysisResults[i],
+                        SiteSection = webhosePost.thread.siteSection,
+                        Title = webhosePost.title,
+                        Url = webhosePost.url,
+                        Website = webhosePost.thread.site,
+                        NamedEntities = namedEntities[i],
+                        PoliticalSentiments = await nlpClient.GetPoliticalSentimentsAsync(webhosePost.text)
+                    });
+                }
+            }
+            
             return newsItems;
         }
     }
