@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Indico.Net.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,5 +28,9 @@ namespace Grind.Core.Models
         public string SiteSection { get; set; }
         
         public string Title { get; set; }
+
+        public Dictionary<string, double> PoliticalSentiments { get; set; }
+
+        public Dictionary<string, NamedEntity> NamedEntities { get; set; }
     }
 }

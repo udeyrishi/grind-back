@@ -9,6 +9,7 @@
       <Setting name="IndicoUrl" value="http://apiv2.indico.io/" />
       <Setting name="KeywordCount" value="3" />
       <Setting name="ResponseCount" value="3" />
+      <Setting name="NamedEntitiesThreshold" value="0.9" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

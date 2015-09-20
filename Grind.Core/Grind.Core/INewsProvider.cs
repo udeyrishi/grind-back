@@ -9,7 +9,7 @@ namespace Grind.Core
 {
     public interface INewsProvider
     {
-        Task<NewsLookupResult> GetNewsFromKeyword(string keyword, int performanceScore, int responseCount, int keywordCount);
-        Task<NewsLookupResult> GetNewsFromUrl(string uri, int performanceScore, int keywordCount);
+        Task<NewsLookupResult> GetNewsFromKeyword(string keyword, int performanceScore, int responseCount, int keywordCount, double namedEntitiesThreshold);
+        Task<NewsLookupResult> GetNewsFromUrl(string uri, int performanceScore, int keywordCount, double namedEntitiesThreshold);
     }
 }

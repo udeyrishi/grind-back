@@ -22,6 +22,7 @@ namespace Grind.Web.Controllers
 
         private readonly int keywordCount = int.Parse(RoleEnvironment.GetConfigurationSettingValue("KeywordCount"));
         private readonly int responseCount = int.Parse(RoleEnvironment.GetConfigurationSettingValue("ResponseCount"));
+        private readonly double namedEntitiesThreshold = double.Parse(RoleEnvironment.GetConfigurationSettingValue("NamedEntitiesThreshold"));
 
         private const string nextRouteUrlHeader = "X-Next-Url";
 
@@ -38,11 +39,11 @@ namespace Grind.Web.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(nextUrl))
                     {
-                        newsResult = await newsProvider.GetNewsFromKeyword(keyword, performanceScore, responseCount, keywordCount);
+                        newsResult = await newsProvider.GetNewsFromKeyword(keyword, performanceScore, responseCount, keywordCount, namedEntitiesThreshold);
                     }
                     else
                     {
-                        newsResult = await newsProvider.GetNewsFromUrl(nextUrl, performanceScore, keywordCount);
+                        newsResult = await newsProvider.GetNewsFromUrl(nextUrl, performanceScore, keywordCount, namedEntitiesThreshold);
                     }
                 }
                 catch (ArgumentException e)

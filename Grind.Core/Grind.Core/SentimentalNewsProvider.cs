@@ -7,6 +7,7 @@ using Grind.Core.Models;
 using Utilities;
 using Indico.Net;
 using webhose;
+using Indico.Net.Models;
 
 namespace Grind.Core
 {
@@ -25,7 +26,7 @@ namespace Grind.Core
         }
 
         public async Task<NewsLookupResult> GetNewsFromKeyword(string keyword,
-            int performanceScore, int responseCount, int keywordCount)
+            int performanceScore, int responseCount, int keywordCount, double namedEntitiesThreshold)
         {
             keyword.CheckNotNullOrWhitespace("keyword");
             (performanceScore >= 0).CheckCondition("performanceScore can't be negative.", "performanceScore");
@@ -33,14 +34,14 @@ namespace Grind.Core
             (keywordCount >= 0).CheckCondition("keywordCount can't be negative.", "keywordCount");
 
             var webhoseResponse = await newsClient.SearchAsync(keyword, performanceScore, responseCount, Languages.english);
-            return await CreateNewsLookupResult(performanceScore, keywordCount, webhoseResponse);
+            return await CreateNewsLookupResult(performanceScore, keywordCount, namedEntitiesThreshold, webhoseResponse);
         }
 
-        public async Task<NewsLookupResult> GetNewsFromUrl(string uri, int performanceScore, int keywordCount)
+        public async Task<NewsLookupResult> GetNewsFromUrl(string uri, int performanceScore, int keywordCount, double namedEntitiesThreshold)
         {
             (performanceScore >= 0).CheckCondition("performanceScore can't be negative.", "performanceScore");
             var webhoseResponse = await newsClient.SearchAsync(CleanupNextUri(uri));
-            return await CreateNewsLookupResult(performanceScore, keywordCount, webhoseResponse);
+            return await CreateNewsLookupResult(performanceScore, keywordCount, namedEntitiesThreshold, webhoseResponse);
         }
 
         private string CleanupNextUri(string uri)
@@ -57,9 +58,9 @@ namespace Grind.Core
             return uri.Replace("token=" + webHoseToken, "").Replace("format=html", "");
         }
 
-        private async Task<NewsLookupResult> CreateNewsLookupResult(int performanceScore, int keywordCount, WebhoseResponse webhoseResponse)
+        private async Task<NewsLookupResult> CreateNewsLookupResult(int performanceScore, int keywordCount, double namedEntitiesThreshold, WebhoseResponse webhoseResponse)
         {
-            var newItems = FilterNewsItemsByPerformanceScore(await GetNewsItemsFromWebhoseResponse(webhoseResponse, keywordCount), performanceScore);
+            var newItems = FilterNewsItemsByPerformanceScore(await GetNewsItemsFromWebhoseResponse(webhoseResponse, keywordCount, namedEntitiesThreshold), performanceScore);
             return new NewsLookupResult()
             {
                 NextUrl = newItems.Count() > 0 ? webhoseResponse.next : null,
@@ -72,12 +73,14 @@ namespace Grind.Core
             return newsItems.Where(news => news.PerformanceScore == performanceScore);
         }
 
-        private async Task<IEnumerable<NewsItem>> GetNewsItemsFromWebhoseResponse(WebhoseResponse webhoseResponse, int keywordCount)
+        private async Task<IEnumerable<NewsItem>> GetNewsItemsFromWebhoseResponse(WebhoseResponse webhoseResponse, int keywordCount, double namedEntitiesThreshold)
         {
             Dictionary<string, double>[] keywords = await nlpClient.GetKeywordsAsync(webhoseResponse.posts.Select(p => p.text));
             double[] sentimentAnalysisResults = await nlpClient.AnalyseSentimentAsync(webhoseResponse.posts.Select(p => p.text));
+            Dictionary<string, NamedEntity>[] namedEntities = await nlpClient.GetNamedEntities(webhoseResponse.posts.Select(p => p.text), namedEntitiesThreshold);
 
             var newsItems = new List<NewsItem>();
+
             for (int i = 0; i < webhoseResponse.posts.Count; ++i)
             {
                 var webhosePost = webhoseResponse.posts[i];
@@ -92,7 +95,9 @@ namespace Grind.Core
                     SiteSection = webhosePost.thread.siteSection,
                     Title = webhosePost.title,
                     Url = webhosePost.url,
-                    Website = webhosePost.thread.site
+                    Website = webhosePost.thread.site,
+                    NamedEntities = namedEntities[i],
+                    PoliticalSentiments = await nlpClient.GetPoliticalSentimentsAsync(webhosePost.text)
                 });
             }
 
