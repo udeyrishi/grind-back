@@ -5,10 +5,15 @@ namespace Indico.Net.Models
 {
     public class NamedEntity
     {
-        [JsonProperty("categories")]
         public Dictionary<string, double> Categories { get; set; }
 
-        [JsonProperty("confidence")]
         public double Confidence { get; set; }
+
+        [JsonConstructor]
+        public NamedEntity(Dictionary<string, double> categories, double confidence)
+        {
+            this.Categories = categories;
+            this.Confidence = confidence;
+        }
     }
 }
