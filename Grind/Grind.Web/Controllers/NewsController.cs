@@ -32,11 +32,12 @@ namespace Grind.Web.Controllers
         [Route("{performanceScore}/{keyword}")]
         public async Task<HttpResponseMessage> GetNews(int performanceScore, string keyword, HttpRequestMessage request)
         {
+            NewsLookupResult newsResult;
+
             if (request.Headers.Contains(nextRouteUrlHeader))
             {
                 string nextUrlString = request.Headers.First(h => h.Key == nextRouteUrlHeader).Value.ElementAt(0);
-
-                NewsLookupResult newsResult;
+                
                 try
                 {
                     if (string.IsNullOrWhiteSpace(nextUrlString))
@@ -64,20 +65,17 @@ namespace Grind.Web.Controllers
                         Content = new StringContent(e.Message)
                     };
                 }
-
-
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(newsResult, Formatting.Indented))
-                };
             }
+
             else
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(string.Format("Request must contain header {0}", nextRouteUrlHeader))
-                };
+                newsResult = await newsProvider.GetNewsFromKeyword(keyword, performanceScore, responseCount, keywordCount, namedEntitiesThreshold);
             }
+
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(newsResult, Formatting.Indented))
+            };
         }
     }
 }
