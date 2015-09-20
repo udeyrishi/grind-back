@@ -22,6 +22,7 @@ On a Windows machine:
 - Download and install Visual Studio (https://www.visualstudio.com/downloads/download-visual-studio-vs)
 - Install the Azure SDK (http://azure.microsoft.com/en-us/downloads/)
 
+This project was built for Hack the North, Waterloo - 2015
 
    [dill]: <https://github.com/joemccann/dillinger>
    [git-repo-url]: <https://github.com/joemccann/dillinger.git>
