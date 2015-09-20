@@ -15,6 +15,7 @@
       <Setting name="IndicoUrl" />
       <Setting name="KeywordCount" />
       <Setting name="ResponseCount" />
+      <Setting name="NamedEntitiesThreshold" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
