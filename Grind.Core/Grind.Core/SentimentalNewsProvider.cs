@@ -60,11 +60,10 @@ namespace Grind.Core
 
         private async Task<NewsLookupResult> CreateNewsLookupResult(int performanceScore, int keywordCount, double namedEntitiesThreshold, WebhoseResponse webhoseResponse)
         {
-            var newItems = FilterNewsItemsByPerformanceScore(await GetNewsItemsFromWebhoseResponse(webhoseResponse, keywordCount, namedEntitiesThreshold), performanceScore);
             return new NewsLookupResult()
             {
-                NextUrl = newItems.Count() > 0 ? webhoseResponse.next : null,
-                NewsItems = newItems
+                NextUrl = webhoseResponse.next,
+                NewsItems = FilterNewsItemsByPerformanceScore(await GetNewsItemsFromWebhoseResponse(webhoseResponse, keywordCount, namedEntitiesThreshold), performanceScore)
             };
         }
 
