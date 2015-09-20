@@ -37,10 +37,10 @@ namespace Grind.Core
             return await CreateNewsLookupResult(performanceScore, keywordCount, namedEntitiesThreshold, webhoseResponse);
         }
 
-        public async Task<NewsLookupResult> GetNewsFromUrl(string uri, int performanceScore, int keywordCount, double namedEntitiesThreshold)
+        public async Task<NewsLookupResult> GetNewsFromUrl(Uri uri, int performanceScore, int keywordCount, double namedEntitiesThreshold)
         {
             (performanceScore >= 0).CheckCondition("performanceScore can't be negative.", "performanceScore");
-            var webhoseResponse = await newsClient.SearchAsync(CleanupNextUri(uri));
+            var webhoseResponse = await newsClient.SearchAsync(CleanupNextUri(uri.ToString()));
             return await CreateNewsLookupResult(performanceScore, keywordCount, namedEntitiesThreshold, webhoseResponse);
         }
 

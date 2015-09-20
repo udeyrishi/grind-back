@@ -32,18 +32,27 @@ namespace Grind.Web.Controllers
         {
             if (request.Headers.Contains(nextRouteUrlHeader))
             {
-                string nextUrl = request.Headers.First(h => h.Key == nextRouteUrlHeader).Value.ElementAt(0);
+                string nextUrlString = request.Headers.First(h => h.Key == nextRouteUrlHeader).Value.ElementAt(0);
 
                 NewsLookupResult newsResult;
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(nextUrl))
+                    if (string.IsNullOrWhiteSpace(nextUrlString))
                     {
                         newsResult = await newsProvider.GetNewsFromKeyword(keyword, performanceScore, responseCount, keywordCount, namedEntitiesThreshold);
                     }
                     else
                     {
-                        newsResult = await newsProvider.GetNewsFromUrl(nextUrl, performanceScore, keywordCount, namedEntitiesThreshold);
+                        Uri nextUri;
+                        if (!Uri.TryCreate(nextUrlString, UriKind.Absolute, out nextUri))
+                        {
+                            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                            {
+                                Content = new StringContent(nextRouteUrlHeader + " needs to be a valid URL.")
+                            };
+                        }
+
+                        newsResult = await newsProvider.GetNewsFromUrl(nextUri, performanceScore, keywordCount, namedEntitiesThreshold);
                     }
                 }
                 catch (ArgumentException e)
