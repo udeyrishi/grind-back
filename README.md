@@ -7,20 +7,20 @@ Grind is a web application for reading news, articles, and blog posts that adds 
 ### Tech
 
 Grind Web Service is powered by:
-* Microsoft Azure (https://azure.microsoft.com/)
-* Indico (https://indico.io/)
-* WebHose (https://webhose.io/)
+* [Microsoft Azure](https://azure.microsoft.com/)
+* [Indico](https://indico.io/)
+* [WebHose](https://webhose.io/)
 
-The web front-end repository is here: https://github.com/ahoskins/grind
+The web front-end repository is [here](https://github.com/ahoskins/grind)
  
 ### Installation
 
-For running the Azure Cloud Service locally, ideally you would need a Windows machine; though you might be able to use Xamarin (https://xamarin.com/) to get it working on OS X as well. You should be able to open the supporting C# libraries in Xamarin out of the box, though the Azure Cloud Service itself might require some work.
+For running the Azure Cloud Service locally, ideally you would need a Windows machine; though you might be able to use [Xamarin](https://xamarin.com/) to get it working on OS X as well. You should be able to open the supporting C# libraries in Xamarin out of the box, though the Azure Cloud Service itself might require some work.
 
 On a Windows machine:
 
-- Download and install Visual Studio (https://www.visualstudio.com/downloads/download-visual-studio-vs)
-- Install the Azure SDK (http://azure.microsoft.com/en-us/downloads/)
+- Download and install [Visual Studio](https://www.visualstudio.com/downloads/download-visual-studio-vs)
+- Install the [Azure SDK](http://azure.microsoft.com/en-us/downloads/)
 
 This project was built for Hack the North, Waterloo - 2015
 
