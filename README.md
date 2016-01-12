@@ -48,3 +48,7 @@ This project was built for Hack the North, Waterloo - 2015
    [PlOd]: <https://github.com/joemccann/dillinger/tree/master/plugins/onedrive/README.md>
 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/udeyrishi/grind-back/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
