@@ -1,7 +1,5 @@
 # Grind Web Service
 
-***Note: This repository will be soon deprecated in favour of the [cross-platform version](https://github.com/udeyrishi/grind-back-xplat).***
-
 Grind is a web application for reading news, articles, and blog posts that adds a new dimension to the act of reading. Grind gathers articles from multiple online sources, and uses Natural Language Processing to understand the sentiment the author tried to put into the piece of writing. It also discovers keywords associated with the text, so as to give a quick summary to the reader. All this information is provided to the user in a very modern and delightful way that allows them to either skim through the articles, or open them to read further. This repository contains the cloud service that powers Grind.
 
  - Visit [Grind Online](http://www.grindonline.co) for experiencing Grind. See [Devpost](http://devpost.com/software/grind-4noctr) page
